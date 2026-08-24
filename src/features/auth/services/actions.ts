@@ -21,15 +21,11 @@ export async function signIn(
     email: formData.get("email"),
     password: formData.get("password"),
   });
-
   if (!parsed.success) return formError(parsed.error);
-
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
-
   if (error)
     return { error: "We could not sign you in. Check your details and try again." };
-
   redirect("/dashboard");
 }
 
@@ -37,15 +33,17 @@ export async function signUp(
   _: AuthFormState,
   formData: FormData,
 ): Promise<AuthFormState> {
+  const invitationToken =
+    typeof formData.get("invitationToken") === "string"
+      ? (formData.get("invitationToken") as string)
+      : undefined;
   const parsed = signUpSchema.safeParse({
     fullName: formData.get("fullName"),
-    churchName: formData.get("churchName"),
+    churchName: invitationToken ? "invited" : formData.get("churchName"),
     email: formData.get("email"),
     password: formData.get("password"),
   });
-
   if (!parsed.success) return formError(parsed.error);
-
   const origin = (await headers()).get("origin") ?? "";
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -54,16 +52,14 @@ export async function signUp(
     options: {
       data: {
         full_name: parsed.data.fullName,
-        church_name: parsed.data.churchName,
+        church_name: invitationToken ? undefined : parsed.data.churchName,
+        invitation_token: invitationToken,
       },
       emailRedirectTo: `${origin}/auth/callback`,
     },
   });
-
   if (error) return { error: "We could not create your account. Please try again." };
-
   if (data.session) redirect("/dashboard");
-
   return {
     success:
       "Check your email to confirm your account. Your church workspace will be created after confirmation.",

@@ -8,43 +8,49 @@ import { signIn, signUp } from "@/features/auth/services/actions";
 import type { AuthFormState } from "@/features/auth/types";
 
 type AuthMode = "sign-in" | "sign-up";
-
 const initialState: AuthFormState = {};
 
-export function AuthForm({ mode }: { mode: AuthMode }) {
+export function AuthForm({
+  mode,
+  invitationToken,
+}: {
+  mode: AuthMode;
+  invitationToken?: string;
+}) {
   const action = mode === "sign-in" ? signIn : signUp;
   const [state, formAction, pending] = useActionState(action, initialState);
   const isSignUp = mode === "sign-up";
-
   return (
     <form action={formAction} className="space-y-5" noValidate>
+      {invitationToken ? (
+        <input name="invitationToken" type="hidden" value={invitationToken} />
+      ) : null}
       {isSignUp ? (
         <div className="grid gap-5 sm:grid-cols-2">
           <Field
-            label="Your full name"
-            name="fullName"
             autoComplete="name"
             error={state.fieldErrors?.fullName}
+            label="Your full name"
+            name="fullName"
           />
-          <Field
-            label="Church or ministry"
-            name="churchName"
-            autoComplete="organization"
-            error={state.fieldErrors?.churchName}
-          />
+          {!invitationToken ? (
+            <Field
+              autoComplete="organization"
+              error={state.fieldErrors?.churchName}
+              label="Church or ministry"
+              name="churchName"
+            />
+          ) : null}
         </div>
       ) : null}
       <Field
+        autoComplete="email"
+        error={state.fieldErrors?.email}
         label="Email address"
         name="email"
         type="email"
-        autoComplete="email"
-        error={state.fieldErrors?.email}
       />
       <Field
-        label="Password"
-        name="password"
-        type="password"
         autoComplete={isSignUp ? "new-password" : "current-password"}
         error={state.fieldErrors?.password}
         hint={
@@ -52,6 +58,9 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             ? "At least 12 characters, with upper- and lowercase letters and a number."
             : undefined
         }
+        label="Password"
+        name="password"
+        type="password"
       />
       {state.error ? (
         <p className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-3 py-2 text-sm">
@@ -67,7 +76,9 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         {pending
           ? "Please wait…"
           : isSignUp
-            ? "Create secure workspace"
+            ? invitationToken
+              ? "Join secure workspace"
+              : "Create secure workspace"
             : "Sign in to your workspace"}
       </Button>
       <p className="text-muted-foreground text-center text-sm">
@@ -105,19 +116,19 @@ function Field({
         {label}
       </label>
       <input
+        aria-describedby={error?.length ? `${id}-error` : undefined}
+        aria-invalid={Boolean(error?.length)}
+        autoComplete={autoComplete}
+        className="border-input bg-background focus:border-primary focus:ring-primary/20 h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-3"
         id={id}
         name={name}
         type={type}
-        autoComplete={autoComplete}
-        aria-invalid={Boolean(error?.length)}
-        aria-describedby={error?.length ? `${id}-error` : undefined}
-        className="border-input bg-background focus:border-primary focus:ring-primary/20 h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-3"
       />
       {hint ? (
         <p className="text-muted-foreground text-xs leading-relaxed">{hint}</p>
       ) : null}
       {error?.map((message) => (
-        <p id={`${id}-error`} key={message} className="text-destructive text-xs">
+        <p className="text-destructive text-xs" id={`${id}-error`} key={message}>
           {message}
         </p>
       ))}
