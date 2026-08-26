@@ -1,7 +1,17 @@
 import { AuthShell } from "@/components/layout/auth-shell";
 import { AuthForm } from "@/features/auth/components/auth-form";
 
-export default function LoginPage() {
+const authErrors: Record<string, string> = {
+  confirmation_failed:
+    "We could not confirm your account. Request a new confirmation email and try again.",
+  invitation_acceptance_failed:
+    "Your account was confirmed, but the invitation could not be accepted. Ask a workspace administrator for a new invitation.",
+};
+
+export default async function LoginPage({ searchParams }: PageProps<"/login">) {
+  const { error } = await searchParams;
+  const message = typeof error === "string" ? authErrors[error] : undefined;
+
   return (
     <AuthShell>
       <div className="w-full">
@@ -12,6 +22,11 @@ export default function LoginPage() {
         <p className="text-muted-foreground mt-3 text-sm leading-6">
           Your service control room is ready when you are.
         </p>
+        {message ? (
+          <p className="border-destructive/30 bg-destructive/10 text-destructive mt-6 rounded-lg border px-3 py-2 text-sm">
+            {message}
+          </p>
+        ) : null}
         <div className="mt-8">
           <AuthForm mode="sign-in" />
         </div>

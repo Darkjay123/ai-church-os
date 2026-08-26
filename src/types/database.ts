@@ -212,6 +212,21 @@ export type Database = {
         Args: { target_profile_id: string; target_role_id: string };
         Returns: undefined;
       };
+      set_workspace_member_status: {
+        Args: {
+          target_profile_id: string;
+          target_status: "active" | "invited" | "suspended";
+        };
+        Returns: undefined;
+      };
+      validate_workspace_invitation: {
+        Args: { token_digest: string };
+        Returns: { email: string }[];
+      };
+      accept_workspace_invitation: {
+        Args: { invitation_token: string };
+        Returns: string;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

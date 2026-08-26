@@ -16,7 +16,7 @@ npm install
 npm run dev
 ```
 
-Set the Supabase variables in `.env.local`, then apply the migration in `supabase/migrations/` before testing sign-up or sign-in.
+Set the Supabase variables in `.env.local`, then apply every migration in `supabase/migrations/` in order before testing sign-up or sign-in. `202608250003_foundation_hardening.sql` is required for the current grants, invitation acceptance, RLS, and authorization model; see `docs/foundation-hardening.md`.
 
 ## Quality checks
 
@@ -27,6 +27,8 @@ npm run test
 npm run build
 npm run format:check
 ```
+
+Database-level RLS and grant tests live in `supabase/tests/database/`. Run them with `npx supabase start` followed by `npx supabase test db` (or against an explicitly linked non-production project).
 
 ## Project structure
 

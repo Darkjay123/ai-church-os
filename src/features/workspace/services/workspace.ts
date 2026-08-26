@@ -1,4 +1,4 @@
-import { hasSupabaseConfig } from "@/lib/env";
+import { canUsePreviewFallback, getSupabaseConfig, hasSupabaseConfig } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import type {
   WorkspaceInvitation,
@@ -42,7 +42,9 @@ export type WorkspaceShellContext = {
 };
 
 export async function getWorkspaceShellContext(): Promise<WorkspaceShellContext> {
-  if (!hasSupabaseConfig()) return { organization: null, profile: null };
+  if (!hasSupabaseConfig()) {
+    getSupabaseConfig();
+  }
 
   const supabase = await createClient();
   const {
@@ -50,33 +52,45 @@ export async function getWorkspaceShellContext(): Promise<WorkspaceShellContext>
   } = await supabase.auth.getUser();
   if (!user) return { organization: null, profile: null };
 
-  const { data: profile } = await supabase
+  const profileResult = await supabase
     .from("profiles")
     .select("id, organization_id, full_name, email")
     .eq("id", user.id)
     .maybeSingle();
+  if (profileResult.error) {
+    logWorkspaceFailure("load-profile", profileResult.error);
+    return { organization: null, profile: null };
+  }
+  const profile = profileResult.data;
   if (!profile) return { organization: null, profile: null };
 
-  const { data: organization } = await supabase
+  const organizationResult = await supabase
     .from("organizations")
     .select("id, name, timezone")
     .eq("id", profile.organization_id)
     .maybeSingle();
+  if (organizationResult.error) {
+    logWorkspaceFailure("load-organization", organizationResult.error);
+    return { organization: null, profile: null };
+  }
+  const organization = organizationResult.data;
+  if (!organization) return { organization: null, profile: null };
 
   return {
-    organization: organization
-      ? {
-          id: organization.id,
-          name: organization.name,
-          timezone: organization.timezone,
-        }
-      : null,
+    organization: {
+      id: organization.id,
+      name: organization.name,
+      timezone: organization.timezone,
+    },
     profile: { id: profile.id, fullName: profile.full_name, email: profile.email },
   };
 }
 
 export async function getWorkspaceSettingsData(): Promise<WorkspaceSettingsData> {
-  if (!hasSupabaseConfig()) return fallbackData;
+  if (!hasSupabaseConfig()) {
+    if (canUsePreviewFallback()) return fallbackData;
+    getSupabaseConfig();
+  }
 
   const supabase = await createClient();
   const {
@@ -250,4 +264,24 @@ export async function getWorkspaceSettingsData(): Promise<WorkspaceSettingsData>
       manageRoles: authorizationResults[3],
     },
   };
+}
+
+function logWorkspaceFailure(
+  operation: "load-profile" | "load-organization",
+  error: {
+    code?: string;
+    message: string;
+    details?: string | null;
+    hint?: string | null;
+  },
+) {
+  if (process.env.NODE_ENV !== "production") {
+    console.error("[workspace] Supabase request failed", {
+      operation,
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+  }
 }
