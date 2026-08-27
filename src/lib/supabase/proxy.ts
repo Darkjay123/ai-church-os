@@ -4,17 +4,10 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseConfig } from "@/lib/env";
 import type { Database } from "@/types/database";
 
-const protectedPrefixes = [
-  "/dashboard",
-  "/live-service",
-  "/presentations",
-  "/settings",
-];
+const publicPaths = new Set(["/", "/login", "/sign-up", "/auth/callback"]);
 
 function isProtectedPath(pathname: string) {
-  return protectedPrefixes.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
-  );
+  return !publicPaths.has(pathname);
 }
 
 export async function updateSession(request: NextRequest) {

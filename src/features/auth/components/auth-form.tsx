@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { OAuthProviderButton } from "@/features/auth/components/oauth-provider-button";
 import { signIn, signUp } from "@/features/auth/services/actions";
 import type { AuthFormState } from "@/features/auth/types";
 
@@ -20,8 +21,17 @@ export function AuthForm({
   const action = mode === "sign-in" ? signIn : signUp;
   const [state, formAction, pending] = useActionState(action, initialState);
   const isSignUp = mode === "sign-up";
+
   return (
     <form action={formAction} className="space-y-5" noValidate>
+      <OAuthProviderButton invitationToken={invitationToken} mode={mode} />
+      <div className="flex items-center gap-3" aria-hidden="true">
+        <div className="bg-border h-px flex-1" />
+        <span className="text-muted-foreground text-xs font-medium tracking-[0.12em] uppercase">
+          or continue with email
+        </span>
+        <div className="bg-border h-px flex-1" />
+      </div>
       {invitationToken ? (
         <input name="invitationToken" type="hidden" value={invitationToken} />
       ) : null}
@@ -63,12 +73,18 @@ export function AuthForm({
         type="password"
       />
       {state.error ? (
-        <p className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-3 py-2 text-sm">
+        <p
+          className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-3 py-2 text-sm"
+          role="alert"
+        >
           {state.error}
         </p>
       ) : null}
       {state.success ? (
-        <p className="rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-3 py-2 text-sm text-emerald-300">
+        <p
+          className="rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-3 py-2 text-sm text-emerald-300"
+          role="status"
+        >
           {state.success}
         </p>
       ) : null}

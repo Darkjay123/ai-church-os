@@ -227,6 +227,10 @@ export type Database = {
         Args: { invitation_token: string };
         Returns: string;
       };
+      provision_oauth_workspace: {
+        Args: { organization_name: string };
+        Returns: string;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

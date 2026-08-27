@@ -103,3 +103,7 @@ Do not edit the historical migrations after deployment. Apply `202608250003_foun
 
 - `src/app/(app)/[workspace-area]/page.tsx` deliberately displays named roadmap placeholders but does return a generic protected placeholder for unknown single-segment workspace URLs. It does not expose data or bypass auth. Replace it with explicit routes as features ship.
 - Logging now uses small structured server events with timestamp, operation, request ID, safe user ID, category, and safe database error metadata. It intentionally does not attempt to become a full observability platform.
+
+## Google OAuth workspace provisioning
+
+Supabase OAuth does not accept arbitrary sign-up metadata for a new social account. A first-time Google user is therefore authenticated and redirected to `/complete-workspace`, where the authenticated user supplies the church or ministry name. `202608250005_google_oauth_workspace_provisioning.sql` adds the narrowly scoped `provision_oauth_workspace(text)` RPC. It creates the same organisation, system roles, owner profile, owner-role assignment, and audit record as the existing email/password `handle_new_user` trigger. Existing Google users with a profile are redirected directly to the dashboard. Google setup and callback allow-listing are documented in `docs/google-oauth-setup.md`.

@@ -18,6 +18,8 @@ npm run dev
 
 Set the Supabase variables in `.env.local`, then apply every migration in `supabase/migrations/` in order before testing sign-up or sign-in. `202608250003_foundation_hardening.sql` is required for the current grants, invitation acceptance, RLS, and authorization model; see `docs/foundation-hardening.md`.
 
+Google OAuth configuration, callback allow-listing, and migration prerequisites are documented in `docs/google-oauth-setup.md`.
+
 ## Quality checks
 
 ```bash
