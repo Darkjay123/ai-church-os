@@ -102,7 +102,17 @@ async function getLiveServiceScope() {
     .select("organization_id")
     .eq("id", user.id)
     .single();
-  if (error || !profile) throw new Error("Your workspace could not be loaded.");
+  if (error) {
+    logServerEvent("error", {
+      operation: "load-live-service-scope",
+      category: "live-service",
+      userId: user.id,
+      code: error.code,
+      message: error.message,
+    });
+    throw error;
+  }
+  if (!profile) throw new Error("Your workspace could not be loaded.");
 
   return { supabase, userId: user.id, organizationId: profile.organization_id };
 }
@@ -123,6 +133,7 @@ function getSafeServiceError(error: unknown, action: "create" | "start" | "end")
     return message;
   }
   if (message === "Your session has ended. Please sign in again.") return message;
+  if (message === "Your workspace could not be loaded.") return message;
   if (action === "create") return "We could not create this service. Please try again.";
   return `We could not ${action} service mode. Please try again.`;
 }

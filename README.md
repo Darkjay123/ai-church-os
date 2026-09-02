@@ -16,7 +16,7 @@ npm install
 npm run dev
 ```
 
-Set the Supabase variables in `.env.local`, then apply every migration in `supabase/migrations/` in order before testing sign-up, sign-in, or Live Service. `202608250003_foundation_hardening.sql` is required for the current grants, invitation acceptance, RLS, and authorization model; `202609020006_live_service_foundation.sql` adds the protected live-service lifecycle. See `docs/foundation-hardening.md` and `docs/sprint-2.md`.
+Set the Supabase variables in `.env.local`, then apply every migration in `supabase/migrations/` in order before testing sign-up, sign-in, or Live Service. `202608250003_foundation_hardening.sql` is required for the current grants, invitation acceptance, RLS, and authorization model; `202609020006_live_service_foundation.sql` adds the protected live-service lifecycle and `202609020007_restore_permission_function_contract.sql` restores the canonical permission-RPC contract for PostgREST. See `docs/foundation-hardening.md` and `docs/sprint-2.md`.
 
 Google OAuth configuration, callback allow-listing, and migration prerequisites are documented in `docs/google-oauth-setup.md`.
 

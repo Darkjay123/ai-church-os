@@ -1,6 +1,6 @@
 # Sprint 2 — Live Service Foundation
 
-**Status:** Implemented; apply the Sprint 2 migration before using it in each Supabase environment.
+**Status:** Implemented; remote lifecycle verification awaits the corrective permission-RPC migration in environments where the legacy argument order remains.
 
 ## Roadmap item
 
@@ -19,7 +19,7 @@ Sprint 2 is the Live Service Foundation: the operator-controlled heart of AI Chu
 
 ## Migration
 
-Apply `202609020006_live_service_foundation.sql` after migrations `001`–`005`. It creates the service tables, indexes, RLS policies, permission, protected RPCs, audit events, and deterministic permission backfill for existing workspaces.
+Apply `202609020006_live_service_foundation.sql` after migrations `001`–`005`, then apply `202609020007_restore_permission_function_contract.sql`. Migration `007` adds the canonical `has_organization_permission(target_organization_id uuid, required_permission_key text)` overload without removing the legacy overload that existing policies may still reference. It creates the service tables, indexes, RLS policies, permission, protected RPCs, audit events, and deterministic permission backfill for existing workspaces.
 
 ## Verification
 
