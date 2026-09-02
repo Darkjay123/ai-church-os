@@ -1,6 +1,6 @@
 # Sprint 1 — Church Workspace
 
-**Status:** Implemented; awaiting Supabase configuration and migration validation.
+**Status:** Complete; Supabase migrations are applied.
 
 ## Delivered
 

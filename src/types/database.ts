@@ -182,6 +182,30 @@ export type Database = {
         { invitation_id: string; organization_id: string; team_id: string },
         { invitation_id: string; organization_id: string; team_id: string }
       >;
+      services: Table<{
+        id: string;
+        organization_id: string;
+        title: string;
+        service_type: string;
+        scheduled_for: string | null;
+        speaker: string | null;
+        status: "scheduled" | "live" | "ended";
+        started_at: string | null;
+        ended_at: string | null;
+        created_by_profile_id: string;
+        created_at: string;
+        updated_at: string;
+      }>;
+      service_timeline_events: Table<{
+        id: string;
+        organization_id: string;
+        service_id: string;
+        actor_id: string | null;
+        event_type: "service.created" | "service.started" | "service.ended";
+        label: string;
+        details: string | null;
+        created_at: string;
+      }>;
     };
     Views: Record<string, never>;
     Functions: {
@@ -230,6 +254,23 @@ export type Database = {
       provision_oauth_workspace: {
         Args: { organization_name: string };
         Returns: string;
+      };
+      create_live_service: {
+        Args: {
+          service_title: string;
+          service_type_value: string;
+          scheduled_for_value?: string | null;
+          speaker_value?: string | null;
+        };
+        Returns: string;
+      };
+      start_live_service: {
+        Args: { target_service_id: string };
+        Returns: undefined;
+      };
+      end_live_service: {
+        Args: { target_service_id: string };
+        Returns: undefined;
       };
     };
     Enums: Record<string, never>;

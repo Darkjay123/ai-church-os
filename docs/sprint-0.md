@@ -1,6 +1,6 @@
 # Sprint 0 — Project Foundation
 
-**Status:** In progress
+**Status:** Complete
 
 ## Goal
 

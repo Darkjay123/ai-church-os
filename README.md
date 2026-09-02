@@ -6,7 +6,7 @@ AI Church OS is a production-grade, AI-native SaaS platform for church presentat
 
 ## Current delivery
 
-Sprint 0 establishes the production foundation: strict TypeScript, Next.js App Router, Tailwind CSS, shadcn/ui, Supabase boundaries, authentication, organisation-aware RLS migration, global state boundaries, React Query, realtime readiness, protected routes, test tooling, and the desktop-first dashboard shell.
+Sprints 0–1 establish the production, authentication, secure workspace, and RLS foundation. Sprint 2 delivers the operator-owned Live Service control room: services can be created, deliberately started, and deliberately ended with tenant-scoped timeline and audit records. See `docs/sprint-2.md`.
 
 ## Run locally
 
@@ -16,7 +16,7 @@ npm install
 npm run dev
 ```
 
-Set the Supabase variables in `.env.local`, then apply every migration in `supabase/migrations/` in order before testing sign-up or sign-in. `202608250003_foundation_hardening.sql` is required for the current grants, invitation acceptance, RLS, and authorization model; see `docs/foundation-hardening.md`.
+Set the Supabase variables in `.env.local`, then apply every migration in `supabase/migrations/` in order before testing sign-up, sign-in, or Live Service. `202608250003_foundation_hardening.sql` is required for the current grants, invitation acceptance, RLS, and authorization model; `202609020006_live_service_foundation.sql` adds the protected live-service lifecycle. See `docs/foundation-hardening.md` and `docs/sprint-2.md`.
 
 Google OAuth configuration, callback allow-listing, and migration prerequisites are documented in `docs/google-oauth-setup.md`.
 

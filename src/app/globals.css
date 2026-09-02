@@ -86,3 +86,9 @@ input {
 ::selection {
   background: color-mix(in srgb, var(--primary) 32%, transparent);
 }
+
+@layer components {
+  .field-control {
+    @apply border-input bg-background placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20 h-10 w-full rounded-lg border px-3 text-sm transition outline-none focus-visible:ring-3 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+}
