@@ -196,12 +196,25 @@ export type Database = {
         created_at: string;
         updated_at: string;
       }>;
+      live_output_states: Table<{
+        organization_id: string;
+        service_id: string;
+        kind: "image" | "video" | "scripture";
+        payload: Json;
+        version: number;
+        updated_by_profile_id: string;
+        updated_at: string;
+      }>;
       service_timeline_events: Table<{
         id: string;
         organization_id: string;
         service_id: string;
         actor_id: string | null;
-        event_type: "service.created" | "service.started" | "service.ended";
+        event_type:
+          | "service.created"
+          | "service.started"
+          | "service.ended"
+          | "service.output_sent";
         label: string;
         details: string | null;
         created_at: string;
@@ -271,6 +284,10 @@ export type Database = {
       end_live_service: {
         Args: { target_service_id: string };
         Returns: undefined;
+      };
+      set_live_output: {
+        Args: { output_kind: "image" | "video" | "scripture"; output_payload: Json };
+        Returns: number;
       };
     };
     Enums: Record<string, never>;

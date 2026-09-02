@@ -14,7 +14,8 @@ export type LiveService = {
 
 export type LiveServiceTimelineEntry = {
   id: string;
-  eventType: "service.created" | "service.started" | "service.ended";
+  eventType:
+    "service.created" | "service.started" | "service.ended" | "service.output_sent";
   label: string;
   details: string | null;
   createdAt: string;
