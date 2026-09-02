@@ -1,9 +1,7 @@
 import type { LiveContent } from "@/features/live-output/types";
 import { createClient } from "@/lib/supabase/server";
 
-export async function getLiveOutputContent({
-  publicOutput = false,
-}: { publicOutput?: boolean } = {}): Promise<LiveContent | null> {
+export async function getLiveOutputContent(): Promise<LiveContent | null> {
   const supabase = await createClient();
   const {
     data: { user },

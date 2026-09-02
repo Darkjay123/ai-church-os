@@ -2,8 +2,11 @@ import type { LiveContent } from "@/features/live-output/types";
 
 export function toLiveOutputPayload(content: LiveContent) {
   if (content.kind === "scripture") return content;
-  const { previewUrl: _, ...payload } = content;
-  return payload;
+  return {
+    kind: content.kind,
+    name: content.name,
+    assetPath: content.assetPath,
+  };
 }
 
 export function isValidLiveContent(content: LiveContent): boolean {

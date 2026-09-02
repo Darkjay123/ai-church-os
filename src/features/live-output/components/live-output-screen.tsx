@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import type { LiveContent, ScriptureContent } from "@/features/live-output/types";
@@ -57,10 +58,14 @@ export function LiveOutputScreen({
   if (content.kind === "image") {
     return (
       <main className="grid min-h-screen place-items-center bg-black">
-        <img
+        <Image
           alt={content.name}
-          className="h-screen w-screen object-contain"
+          className="object-contain"
+          fill
+          priority
+          sizes="100vw"
           src={content.previewUrl}
+          unoptimized
         />
       </main>
     );

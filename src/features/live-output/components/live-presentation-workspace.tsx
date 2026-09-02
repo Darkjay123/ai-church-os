@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import {
   BookOpenText,
@@ -10,7 +11,6 @@ import {
   Send,
   Square,
   Upload,
-  Video,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -535,13 +535,16 @@ function Preview({ content, label }: { content: LiveContent | null; label: strin
         <span>OPERATOR PREVIEW</span>
         <span>{content?.kind.toUpperCase() ?? "STAGED CONTENT"}</span>
       </div>
-      <div className="aspect-video bg-[#080a0f]">
+      <div className="relative aspect-video bg-[#080a0f]">
         {content ? (
           content.kind === "image" ? (
-            <img
+            <Image
               alt={content.name}
-              className="h-full w-full object-contain"
+              className="object-contain"
+              fill
+              sizes="(max-width: 1280px) 100vw, 70vw"
               src={content.previewUrl}
+              unoptimized
             />
           ) : content.kind === "video" ? (
             <video
